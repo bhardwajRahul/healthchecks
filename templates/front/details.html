@@ -95,6 +95,14 @@
                 <code>(unavailable, set slug first)</code>
                 {% endif %}
 
+                {% if rw and check.url and not project.ping_key %}
+                <p class="alert alert-info">
+                    The ping key is currently not set. Go to
+                    <a href="{% url 'hc-project-settings' project.code %}">project settings</a>
+                    to generate it.
+                </p>
+                {% endif %}
+
                 <p>You can also explicitly
                     <a href="{% url 'hc-serve-doc' 'signaling_failures' %}">
                         signal a failure</a>

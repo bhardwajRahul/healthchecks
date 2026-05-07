@@ -239,15 +239,22 @@ class DetailsTestCase(BaseTestCase):
         self.project.ping_key = None
         self.project.save()
 
+        self.check.slug = "foo"
+        self.check.save()
+
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "Ping Key Required", status_code=200)
         self.assertNotContains(r, "ping-now")
+        self.assertContains(r, "The ping key is currently not set")
 
     def test_it_handles_no_ping_key_for_readonly_user(self) -> None:
         self.project.show_slugs = True
         self.project.ping_key = None
         self.project.save()
+
+        self.check.slug = "foo"
+        self.check.save()
 
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
@@ -256,6 +263,7 @@ class DetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertNotContains(r, "Ping Key Required", status_code=200)
         self.assertNotContains(r, "ping-now")
+        self.assertNotContains(r, "The ping key is currently not set")
 
     def test_it_handles_empty_slug(self) -> None:
         self.project.show_slugs = True
@@ -266,6 +274,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "(unavailable, set slug first)", status_code=200)
         self.assertNotContains(r, "Copy URL")
         self.assertNotContains(r, "ping-now")
+        self.assertNotContains(r, "The ping key is currently not set")
 
     def test_it_saves_url_format_preference(self) -> None:
         self.client.login(username="alice@example.org", password="password")
